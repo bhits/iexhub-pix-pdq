@@ -28,6 +28,9 @@
           "interaction": [
             {
               "code": "create"
+            },
+            {
+              "code": "update"
             }
           ]
         }
