@@ -163,7 +163,7 @@ public class PixOperationServiceImpl implements PixOperationService {
     }
 
     @Override
-    public String editPerson(String patientId, FhirPatientDto fhirPatientDto) {
+    public String editPerson(FhirPatientDto fhirPatientDto) {
         // TODO:: Assert patienid
 
         //Convert FHIR patient to PatientDto
