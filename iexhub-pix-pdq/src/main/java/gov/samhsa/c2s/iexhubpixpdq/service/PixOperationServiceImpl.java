@@ -164,8 +164,6 @@ public class PixOperationServiceImpl implements PixOperationService {
 
     @Override
     public String editPerson(FhirPatientDto fhirPatientDto) {
-        // TODO:: Assert patienid
-
         //Convert FHIR patient to PatientDto
         PixPatientDto pixPatientDto = pixPatientDtoConverter.fhirPatientDtoToPixPatientDto(fhirPatientDto);
         //Translate PatientDto to Pix
