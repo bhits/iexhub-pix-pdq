@@ -2,6 +2,7 @@ package gov.samhsa.c2s.iexhubpixpdq.web;
 
 import gov.samhsa.c2s.iexhubpixpdq.config.IexhubPixPdqProperties;
 import gov.samhsa.c2s.iexhubpixpdq.service.PixOperationService;
+import gov.samhsa.c2s.iexhubpixpdq.service.dto.EmpiPatientDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.dto.FhirPatientDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-
 @RestController
 @Slf4j
 public class PixOperationController {
@@ -27,8 +25,8 @@ public class PixOperationController {
 
     @GetMapping("/patients/{patientId}/mrn-oid/{patientMrnOid}/enterprise-id")
     @ResponseStatus(HttpStatus.OK)
-    public String getPersonEid(@PathVariable String patientId,
-                               @PathVariable String patientMrnOid) {
+    public EmpiPatientDto getPersonEid(@PathVariable String patientId,
+                                       @PathVariable String patientMrnOid) {
         return pixOperationService.queryForEnterpriseId(patientId, patientMrnOid);
     }
 
