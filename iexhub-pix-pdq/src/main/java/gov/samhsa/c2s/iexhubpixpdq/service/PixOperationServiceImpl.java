@@ -3,7 +3,7 @@ package gov.samhsa.c2s.iexhubpixpdq.service;
 import gov.samhsa.c2s.common.marshaller.SimpleMarshaller;
 import gov.samhsa.c2s.common.marshaller.SimpleMarshallerException;
 import gov.samhsa.c2s.iexhubpixpdq.config.IexhubPixPdqProperties;
-import gov.samhsa.c2s.iexhubpixpdq.service.dto.EmpiPatientDto;
+import gov.samhsa.c2s.iexhubpixpdq.service.dto.PatientIdentifierDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.dto.FhirPatientDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.dto.PixPatientDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.exception.PatientNotFoundException;
@@ -54,7 +54,7 @@ public class PixOperationServiceImpl implements PixOperationService {
     }
 
     @Override
-    public EmpiPatientDto queryForEnterpriseId(String patientId, String patientMrnOid) {
+    public PatientIdentifierDto queryForEnterpriseId(String patientId, String patientMrnOid) {
         final PixManagerBean pixMgrBean = new PixManagerBean();
         try {
             //First, get sample request object
@@ -80,7 +80,7 @@ public class PixOperationServiceImpl implements PixOperationService {
 
                 if (enterpriseIdValue != null && !enterpriseIdValue.isEmpty()) {
                     log.info("Found EnterpriseId = " + enterpriseIdValue);
-                    EmpiPatientDto empiPatientId = new EmpiPatientDto();
+                    PatientIdentifierDto empiPatientId = new PatientIdentifierDto();
                     empiPatientId.setPatientId(enterpriseIdValue);
                     empiPatientId.setIdentifier(globalDomainId);
                     empiPatientId.setIdentifierType(iexhubPixPdqProperties.getGlobalDomainIdTypeCode());
