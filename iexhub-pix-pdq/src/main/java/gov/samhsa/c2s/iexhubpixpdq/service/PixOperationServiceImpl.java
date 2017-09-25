@@ -3,6 +3,7 @@ package gov.samhsa.c2s.iexhubpixpdq.service;
 import gov.samhsa.c2s.common.marshaller.SimpleMarshaller;
 import gov.samhsa.c2s.common.marshaller.SimpleMarshallerException;
 import gov.samhsa.c2s.iexhubpixpdq.config.IexhubPixPdqProperties;
+import gov.samhsa.c2s.iexhubpixpdq.service.dto.PatientIdentifierDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.dto.FhirPatientDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.dto.PixPatientDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.exception.PatientNotFoundException;
@@ -53,57 +54,7 @@ public class PixOperationServiceImpl implements PixOperationService {
     }
 
     @Override
-    public String addPerson(String reqXMLPath) {
-        final PixManagerBean pixMgrBean = new PixManagerBean();
-
-        // Convert c32 to pixadd string
-
-        PRPAIN201301UV02 request;
-
-        MCCIIN000002UV01 response;
-        // Delegate to webServiceTemplate for the actual pixadd
-        try {
-            request = requestXMLToJava.getPIXAddReqObject(reqXMLPath);
-            response = pixMgrService.pixManagerPRPAIN201301UV02(request);
-            pixManagerMessageHelper.getAddUpdateMessage(response, pixMgrBean,
-                    PixPdqConstants.PIX_ADD.getMsg());
-        } catch (JAXBException | IOException e) {
-            pixManagerMessageHelper.getGeneralExpMessage(e, pixMgrBean,
-                    PixPdqConstants.PIX_ADD.getMsg());
-            log.error(e.getMessage() + e);
-        }
-        log.debug("response" + pixMgrBean.getAddMessage());
-        return pixMgrBean.getAddMessage();
-    }
-
-    @Override
-    public String updatePerson(String reqXMLPath) {
-        final PixManagerBean pixMgrBean = new PixManagerBean();
-
-        log.debug("Received request to PIXUpdate");
-
-        PRPAIN201302UV02 request;
-
-        MCCIIN000002UV01 response;
-        // Delegate to webServiceTemplate for the actual pixadd
-        try {
-
-            request = requestXMLToJava.getPIXUpdateReqObject(reqXMLPath);
-
-            response = pixMgrService.pixManagerPRPAIN201302UV02(request);
-            pixManagerMessageHelper.getAddUpdateMessage(response, pixMgrBean,
-                    PixPdqConstants.PIX_UPDATE.getMsg());
-        } catch (JAXBException | IOException e) {
-            pixManagerMessageHelper.getGeneralExpMessage(e, pixMgrBean,
-                    PixPdqConstants.PIX_UPDATE.getMsg());
-            log.error(e.getMessage());
-        }
-        log.debug("response" + pixMgrBean.getUpdateMessage());
-        return pixMgrBean.getUpdateMessage();
-    }
-
-    @Override
-    public String queryForEnterpriseId(String patientId, String patientMrnOid) {
+    public PatientIdentifierDto queryForEnterpriseId(String patientId, String patientMrnOid) {
         final PixManagerBean pixMgrBean = new PixManagerBean();
         try {
             //First, get sample request object
@@ -128,10 +79,12 @@ public class PixOperationServiceImpl implements PixOperationService {
                 log.debug("Found EnterpriseIdValue = " + enterpriseIdValue);
 
                 if (enterpriseIdValue != null && !enterpriseIdValue.isEmpty()) {
-                    //Convert to this format: d3bb3930-7241-11e3-b4f7-00155d3a2124^^^&2.16.840.1.113883.4.357&ISO
-                    String enterpriseId = enterpriseIdValue + "^^^&" + globalDomainId + "&" + iexhubPixPdqProperties.getGlobalDomainIdTypeCode();
-                    log.info("Found EnterpriseId = " + enterpriseId);
-                    return enterpriseId;
+                    log.info("Found EnterpriseId = " + enterpriseIdValue);
+                    PatientIdentifierDto empiPatientId = new PatientIdentifierDto();
+                    empiPatientId.setPatientId(enterpriseIdValue);
+                    empiPatientId.setIdentifier(globalDomainId);
+                    empiPatientId.setIdentifierType(iexhubPixPdqProperties.getGlobalDomainIdTypeCode());
+                    return empiPatientId;
                 } else {
                     log.error("Pix Query was successful, but no matching value found that matches with identifier " + globalDomainId);
                     throw new PatientNotFoundException("No patient identifier found that matches with the Identifier Domain value: " + globalDomainId);
@@ -204,4 +157,49 @@ public class PixOperationServiceImpl implements PixOperationService {
     }
 
 
+    private String addPerson(String reqXMLPath) {
+        final PixManagerBean pixMgrBean = new PixManagerBean();
+        // Convert c32 to pixadd string
+        PRPAIN201301UV02 request;
+        MCCIIN000002UV01 response;
+
+        // Delegate to webServiceTemplate for the actual pixadd
+        try {
+            request = requestXMLToJava.getPIXAddReqObject(reqXMLPath);
+            response = pixMgrService.pixManagerPRPAIN201301UV02(request);
+            pixManagerMessageHelper.getAddUpdateMessage(response, pixMgrBean,
+                    PixPdqConstants.PIX_ADD.getMsg());
+        } catch (JAXBException | IOException e) {
+            pixManagerMessageHelper.getGeneralExpMessage(e, pixMgrBean,
+                    PixPdqConstants.PIX_ADD.getMsg());
+            log.error(e.getMessage() + e);
+        }
+        log.debug("response" + pixMgrBean.getAddMessage());
+        return pixMgrBean.getAddMessage();
+    }
+
+    private String updatePerson(String reqXMLPath) {
+        final PixManagerBean pixMgrBean = new PixManagerBean();
+
+        log.debug("Received request to PIXUpdate");
+
+        PRPAIN201302UV02 request;
+
+        MCCIIN000002UV01 response;
+        // Delegate to webServiceTemplate for the actual pixadd
+        try {
+
+            request = requestXMLToJava.getPIXUpdateReqObject(reqXMLPath);
+
+            response = pixMgrService.pixManagerPRPAIN201302UV02(request);
+            pixManagerMessageHelper.getAddUpdateMessage(response, pixMgrBean,
+                    PixPdqConstants.PIX_UPDATE.getMsg());
+        } catch (JAXBException | IOException e) {
+            pixManagerMessageHelper.getGeneralExpMessage(e, pixMgrBean,
+                    PixPdqConstants.PIX_UPDATE.getMsg());
+            log.error(e.getMessage());
+        }
+        log.debug("response" + pixMgrBean.getUpdateMessage());
+        return pixMgrBean.getUpdateMessage();
+    }
 }
