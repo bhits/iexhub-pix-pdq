@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class PixOperationController {
 
+    private final PixOperationService pixOperationService;
+
     @Autowired
-    private PixOperationService pixOperationService;
+    public PixOperationController(PixOperationService pixOperationService) {
+        this.pixOperationService = pixOperationService;
+    }
 
     @GetMapping("/patients/{patientId}/mrn-oid/{patientMrnOid}/enterprise-id")
     @ResponseStatus(HttpStatus.OK)
