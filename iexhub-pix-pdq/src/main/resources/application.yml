@@ -9,7 +9,7 @@ c2s:
   iexhub-pix-pdq:
     pixManagerServiceEndPoint: http://bhitsdevhie01/openempi-admin/services/PIXManager_Port_Soap12
     globalDomainId: 2.16.840.1.113883.4.357
-    globalDomainIdTypeCode: hl7
+    globalDomainIdTypeCode: ISO
     fhir:
       capability-statement:
         publisher: BHITS

@@ -1,13 +1,13 @@
 package gov.samhsa.c2s.iexhubpixpdq.service;
 
 
+import gov.samhsa.c2s.iexhubpixpdq.service.dto.PatientIdentifierDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.dto.FhirPatientDto;
-import gov.samhsa.c2s.pixclient.client.PixManagerClientService;
 
-public interface PixOperationService extends PixManagerClientService {
+public interface PixOperationService {
 
-    String queryForEnterpriseId(String patientId, String patientMrnOid);
+    PatientIdentifierDto queryForEnterpriseId(String patientId, String patientMrnOid);
     String registerPerson(FhirPatientDto fhirPatientDto);
-    String editPerson(String patientId,FhirPatientDto fhirPatientDto);
+    String editPerson(FhirPatientDto fhirPatientDto);
 }
 
