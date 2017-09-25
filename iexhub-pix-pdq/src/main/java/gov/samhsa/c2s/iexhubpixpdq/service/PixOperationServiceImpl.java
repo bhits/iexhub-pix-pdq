@@ -82,6 +82,7 @@ public class PixOperationServiceImpl implements PixOperationService {
                     log.info("Found EnterpriseId = " + enterpriseIdValue);
                     EmpiPatientDto empiPatientId = new EmpiPatientDto();
                     empiPatientId.setPatientId(enterpriseIdValue);
+                    empiPatientId.setIdentifier(globalDomainId);
                     empiPatientId.setIdentifierType(iexhubPixPdqProperties.getGlobalDomainIdTypeCode());
                     return empiPatientId;
                 } else {
