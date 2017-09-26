@@ -26,7 +26,7 @@
         <lombok.version>1.16.18</lombok.version>
         <junit.version>4.12</junit.version>
         <commons-logging.version>1.2</commons-logging.version>
-        <c2s.common-libraries.version>1.17.0-SNAPSHOT</c2s.common-libraries.version>
+        <c2s.common-libraries.version>1.17.0-a115</c2s.common-libraries.version>
         <hapi.fhir.version>2.2</hapi.fhir.version>
         <modelmapper.version>0.7.8</modelmapper.version>
         <spring.cloud.version>Dalston.SR3</spring.cloud.version>
