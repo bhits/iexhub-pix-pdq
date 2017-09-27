@@ -2,8 +2,8 @@ package gov.samhsa.c2s.iexhubpixpdq.web;
 
 import gov.samhsa.c2s.iexhubpixpdq.config.IexhubPixPdqProperties;
 import gov.samhsa.c2s.iexhubpixpdq.service.PixOperationService;
-import gov.samhsa.c2s.iexhubpixpdq.service.dto.PatientIdentifierDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.dto.FhirPatientDto;
+import gov.samhsa.c2s.iexhubpixpdq.service.dto.PatientIdentifierDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +32,12 @@ public class PixOperationController {
     public PatientIdentifierDto getPersonEid(@PathVariable String patientId,
                                              @PathVariable String patientMrnOid) {
         return pixOperationService.queryForEnterpriseId(patientId, patientMrnOid);
+    }
+
+    @GetMapping("/Patient")
+    @ResponseStatus(HttpStatus.OK)
+    public String getFhirPatient(@RequestParam String identifier) {
+        return pixOperationService.searchPatientByMrn(identifier);
     }
 
     @PostMapping(value = "/Patient", consumes = IexhubPixPdqProperties.Fhir.MediaType.APPLICATION_FHIR_JSON_UTF8_VALUE)
