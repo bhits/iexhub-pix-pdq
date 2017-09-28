@@ -18,6 +18,10 @@ c2s:
           version: @project.version@
         implementation:
           description: ${c2s.iexhub-pix-pdq.fhir.capability-statement.software.name}
+    soap:
+      logging-interceptors-enabled: false
+#      connection-timeout-milliseconds:
+#      receive-timeout-milliseconds:
 ---
 spring:
   profiles: docker

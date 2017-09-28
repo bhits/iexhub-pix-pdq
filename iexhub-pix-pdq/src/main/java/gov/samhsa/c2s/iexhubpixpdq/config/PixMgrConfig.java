@@ -1,6 +1,7 @@
 package gov.samhsa.c2s.iexhubpixpdq.config;
 
 
+import gov.samhsa.c2s.common.cxf.SoapVersion;
 import gov.samhsa.c2s.common.document.accessor.DocumentAccessor;
 import gov.samhsa.c2s.common.document.accessor.DocumentAccessorImpl;
 import gov.samhsa.c2s.common.document.converter.DocumentXmlConverter;
@@ -27,7 +28,11 @@ public class PixMgrConfig {
 
     @Bean
     public PixManagerService pixManagerService() {
-        return new PixManagerServiceImpl(iexhubPixPdqProperties.getPixManagerServiceEndPoint());
+        final PixManagerServiceImpl pixManagerService = new PixManagerServiceImpl(iexhubPixPdqProperties.getPixManagerServiceEndPoint(), SoapVersion.SOAP_12);
+        pixManagerService.setLoggingInterceptorsEnabled(iexhubPixPdqProperties.getSoap().isLoggingInterceptorsEnabled());
+        pixManagerService.setConnectionTimeoutMilliseconds(iexhubPixPdqProperties.getSoap().getConnectionTimeoutMilliseconds());
+        pixManagerService.setReceiveTimeoutMilliseconds(iexhubPixPdqProperties.getSoap().getReceiveTimeoutMilliseconds());
+        return pixManagerService;
     }
 
     @Bean
@@ -36,7 +41,7 @@ public class PixMgrConfig {
     }
 
     @Bean
-    public XmlTransformer xmlTransformer(){
+    public XmlTransformer xmlTransformer() {
         return new XmlTransformerImpl(simpleMarshaller());
     }
 
@@ -59,5 +64,4 @@ public class PixMgrConfig {
     public PixManagerMessageHelper pixManagerMessageHelper() {
         return new PixManagerMessageHelper();
     }
-
 }
