@@ -34,12 +34,18 @@
         <saxon-he.version>9.6.0-3</saxon-he.version>
         <docker.maven.version>0.4.3</docker.maven.version>
         <maven-enforcer-plugin.version>3.0.0-M1</maven-enforcer-plugin.version>
+        <logstash-logback-encoder.version>4.11</logstash-logback-encoder.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
         </dependency>
         <!-- Discovery Config -->
         <dependency>
