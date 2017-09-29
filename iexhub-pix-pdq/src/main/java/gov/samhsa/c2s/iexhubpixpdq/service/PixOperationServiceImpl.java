@@ -102,27 +102,27 @@ public class PixOperationServiceImpl implements PixOperationService {
     }
 
     @Override
-    public String registerPerson(FhirPatientDto fhirPatientDto) {
+    public String registerPatient(FhirPatientDto fhirPatientDto) {
 
         // Convert FHIR Patient to PatientDto
         PixPatientDto pixPatientDto = pixPatientDtoConverter.fhirPatientDtoToPixPatientDto(fhirPatientDto);
         // Translate PatientDto to PixAddRequest XML
         String pixAddXml = buildFhirPatient2PixAddXml(pixPatientDto);
-        // Invoke addPerson method that register patient to openempi
-        String addMessage = addPerson(pixAddXml);
+        // Invoke addPatient method that register patient to openempi
+        String addMessage = addPatient(pixAddXml);
         log.debug("server response " + addMessage);
         assertNotNull(addMessage);
         return addMessage;
     }
 
     @Override
-    public String editPerson(FhirPatientDto fhirPatientDto) {
+    public String editPatient(FhirPatientDto fhirPatientDto) {
         //Convert FHIR patient to PatientDto
         PixPatientDto pixPatientDto = pixPatientDtoConverter.fhirPatientDtoToPixPatientDto(fhirPatientDto);
         //Translate PatientDto to Pix
         String pixUpdateXml = buildFhirPatient2PixUpdateXml(pixPatientDto);
-        //Invoke updatePerson method
-        String updateMessage = updatePerson(pixUpdateXml);
+        //Invoke updatePatient method
+        String updateMessage = updatePatient(pixUpdateXml);
         log.debug("server response " + updateMessage);
         assertNotNull(updateMessage);
 
@@ -157,7 +157,7 @@ public class PixOperationServiceImpl implements PixOperationService {
     }
 
 
-    private String addPerson(String reqXMLPath) {
+    private String addPatient(String reqXMLPath) {
         final PixManagerBean pixMgrBean = new PixManagerBean();
         // Convert c32 to pixadd string
         PRPAIN201301UV02 request;
@@ -178,7 +178,7 @@ public class PixOperationServiceImpl implements PixOperationService {
         return pixMgrBean.getAddMessage();
     }
 
-    private String updatePerson(String reqXMLPath) {
+    private String updatePatient(String reqXMLPath) {
         final PixManagerBean pixMgrBean = new PixManagerBean();
 
         log.debug("Received request to PIXUpdate");
