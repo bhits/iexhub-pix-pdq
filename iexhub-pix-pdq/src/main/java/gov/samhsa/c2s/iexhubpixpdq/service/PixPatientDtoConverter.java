@@ -47,7 +47,7 @@ public class PixPatientDtoConverter {
         if (fhirPatientDto.getPatient().getAddress().isEmpty()) {
             pixPatientDto.setAddrStreetAddressLine1("");
         } else {
-            pixPatientDto.setAddrStreetAddressLine1((fhirPatientDto.getPatient().getAddress().get(0).getLine() == null || fhirPatientDto.getPatient().getAddress().get(0).getLine().get(0) == null) ? "" : fhirPatientDto.getPatient().getAddress().get(0)
+            pixPatientDto.setAddrStreetAddressLine1((fhirPatientDto.getPatient().getAddress().get(0).getLine() == null || fhirPatientDto.getPatient().getAddress().get(0).getLine().size() < 1) ? "" : fhirPatientDto.getPatient().getAddress().get(0)
                     .getLine().get(0).getValue());
             pixPatientDto.setAddrStreetAddressLine2((fhirPatientDto.getPatient().getAddress().get(0).getLine() == null || fhirPatientDto.getPatient().getAddress().get(0).getLine().size() < 2) ? "" : fhirPatientDto.getPatient().getAddress()
                     .get(0)
