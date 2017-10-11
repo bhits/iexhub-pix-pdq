@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @Component
 @Data
 @ConfigurationProperties(prefix = "c2s.iexhub-pix-pdq")
+@Validated
 public class IexhubPixPdqProperties {
 
     @NotBlank
@@ -25,6 +27,10 @@ public class IexhubPixPdqProperties {
     @NotNull
     @Valid
     private Fhir fhir;
+
+    @NotNull
+    @Valid
+    private Soap soap;
 
     @Data
     public static class Fhir {
@@ -61,5 +67,12 @@ public class IexhubPixPdqProperties {
                 private String description;
             }
         }
+    }
+
+    @Data
+    public static class Soap {
+        private boolean loggingInterceptorsEnabled = false;
+        private Long connectionTimeoutMilliseconds;
+        private Long receiveTimeoutMilliseconds;
     }
 }

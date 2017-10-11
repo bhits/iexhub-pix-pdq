@@ -29,7 +29,7 @@ public class PixOperationController {
 
     @GetMapping("/patients/{patientId}/mrn-oid/{patientMrnOid}/enterprise-id")
     @ResponseStatus(HttpStatus.OK)
-    public PatientIdentifierDto getPersonEid(@PathVariable String patientId,
+    public PatientIdentifierDto getPatientEid(@PathVariable String patientId,
                                              @PathVariable String patientMrnOid) {
         return pixOperationService.queryForEnterpriseId(patientId, patientMrnOid);
     }
@@ -42,13 +42,13 @@ public class PixOperationController {
 
     @PostMapping(value = "/Patient", consumes = IexhubPixPdqProperties.Fhir.MediaType.APPLICATION_FHIR_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addPerson(@RequestBody FhirPatientDto fhirPatientDto) {
-        pixOperationService.registerPerson(fhirPatientDto);
+    public void addPatient(@RequestBody FhirPatientDto fhirPatientDto) {
+        pixOperationService.registerPatient(fhirPatientDto);
     }
 
     @PutMapping(value = "/Patient", consumes = IexhubPixPdqProperties.Fhir.MediaType.APPLICATION_FHIR_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void updatePerson(@RequestBody FhirPatientDto fhirPatientDto, @RequestParam String identifier) {
-        pixOperationService.editPerson(fhirPatientDto);
+    public void updatePatient(@RequestBody FhirPatientDto fhirPatientDto, @RequestParam String identifier) {
+        pixOperationService.editPatient(fhirPatientDto);
     }
 }
