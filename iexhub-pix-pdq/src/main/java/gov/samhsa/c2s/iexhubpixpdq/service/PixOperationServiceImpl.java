@@ -243,12 +243,10 @@ public class PixOperationServiceImpl implements PixOperationService {
         //return search set bundle
         Bundle bundle = new Bundle();
         bundle.addEntry().setResource(patient);
-        bundle.setTotal(1);
-        bundle.setId(UUID.randomUUID().toString());
-        bundle.setType(Bundle.BundleType.SEARCHSET);
-        Meta meta=new Meta();
+
+        Meta meta = new Meta();
         meta.setLastUpdated(new Date());
-        bundle.setMeta(meta);
+        bundle.setTotal(1).setType(Bundle.BundleType.SEARCHSET).setId(UUID.randomUUID().toString()).setMeta(meta);
 
         return fhirJsonParser.setPrettyPrint(true).encodeResourceToString(bundle);
     }
