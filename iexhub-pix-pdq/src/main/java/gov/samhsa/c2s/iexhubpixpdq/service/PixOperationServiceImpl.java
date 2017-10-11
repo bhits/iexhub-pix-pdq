@@ -215,17 +215,32 @@ public class PixOperationServiceImpl implements PixOperationService {
 
     @Override
     public String searchPatientByMrn(String identifier){
+        //split identifier to identifier system and identifier value
         String[] patientIdentifier=identifier.split("\\|");
-        PatientIdentifierDto patientIdentifierDto = queryForEnterpriseId(patientIdentifier[1], patientIdentifier[0]);
-        Patient patient = new Patient();
-        patient.setId(patientIdentifierDto.getPatientId());
 
+        String patientId;
+        //if patient identifier system is same with global domain id, then do not query HIE
+        if (patientIdentifier[0].equalsIgnoreCase(iexhubPixPdqProperties.getGlobalDomainId()))
+            patientId = patientIdentifier[1] + "^^^&" + patientIdentifier[0] + "&" + iexhubPixPdqProperties.getGlobalDomainIdTypeCode();
+        else {
+            //query to get enterpriseId
+            PatientIdentifierDto patientIdentifierDto = queryForEnterpriseId(patientIdentifier[1], patientIdentifier[0]);
+            //Convert patientId to the format: d3bb3930-7241-11e3-b4f7-00155d3a2124^^^&2.16.840.1.113883.4.357&ISO
+            patientId = patientIdentifierDto.getPatientId() + "^^^&" + patientIdentifierDto.getIdentifier() + "&" + patientIdentifierDto.getIdentifierType();
+        }
+
+        //map enterpriseId to fhir patient
+        Patient patient = new Patient();
+        patient.setId(patientId);
+
+        //add mrn to fhir patient
         Identifier fhirIdentifier= new Identifier();
         fhirIdentifier.setSystem(patientIdentifier[0]);
         fhirIdentifier.setValue(patientIdentifier[1]);
 
         patient.setIdentifier(Arrays.asList(fhirIdentifier));
 
+        //return search set bundle
         Bundle bundle = new Bundle();
         bundle.addEntry().setResource(patient);
         bundle.setTotal(1);
