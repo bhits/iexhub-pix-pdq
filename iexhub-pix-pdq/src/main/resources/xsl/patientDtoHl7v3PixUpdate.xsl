@@ -73,7 +73,6 @@
                                         <urn:telecom value="{/c2s:PixPatientDto/c2s:telecomValue[1]}" />
                                     </xsl:if>
 
-                                    value="{/c2s:PixPatientDto/c2s:emailValue[1]}" />
                                     <urn:administrativeGenderCode
                                             code="{/c2s:PixPatientDto/c2s:administrativeGenderCode[1]}"/>
                                     <urn:birthTime
