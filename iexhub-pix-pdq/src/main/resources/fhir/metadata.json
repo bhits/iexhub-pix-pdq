@@ -31,6 +31,9 @@
             },
             {
               "code": "update"
+            },
+            {
+              "code": "search-type"
             }
           ]
         }

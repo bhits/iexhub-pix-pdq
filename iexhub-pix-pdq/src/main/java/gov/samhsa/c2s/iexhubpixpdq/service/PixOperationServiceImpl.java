@@ -1,10 +1,11 @@
 package gov.samhsa.c2s.iexhubpixpdq.service;
 
+import ca.uhn.fhir.parser.JsonParser;
 import gov.samhsa.c2s.common.marshaller.SimpleMarshaller;
 import gov.samhsa.c2s.common.marshaller.SimpleMarshallerException;
 import gov.samhsa.c2s.iexhubpixpdq.config.IexhubPixPdqProperties;
-import gov.samhsa.c2s.iexhubpixpdq.service.dto.PatientIdentifierDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.dto.FhirPatientDto;
+import gov.samhsa.c2s.iexhubpixpdq.service.dto.PatientIdentifierDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.dto.PixPatientDto;
 import gov.samhsa.c2s.iexhubpixpdq.service.exception.PatientNotFoundException;
 import gov.samhsa.c2s.iexhubpixpdq.service.exception.PixOperationException;
@@ -14,6 +15,10 @@ import gov.samhsa.c2s.pixclient.util.PixManagerMessageHelper;
 import gov.samhsa.c2s.pixclient.util.PixManagerRequestXMLToJava;
 import gov.samhsa.c2s.pixclient.util.PixPdqConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Meta;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.v3.MCCIIN000002UV01;
 import org.hl7.v3.PRPAIN201301UV02;
 import org.hl7.v3.PRPAIN201302UV02;
@@ -24,7 +29,10 @@ import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.joining;
 import static org.junit.Assert.assertNotNull;
@@ -40,6 +48,9 @@ public class PixOperationServiceImpl implements PixOperationService {
     private final SimpleMarshaller simpleMarshaller;
     private final PixPatientDtoConverter pixPatientDtoConverter;
     private String SAMPLE_QUERY_REQUEST_XML = "empi_pixquery_sample.xml";
+
+    @Autowired
+    private JsonParser fhirJsonParser;
 
     @Autowired
     public PixOperationServiceImpl(PixManagerRequestXMLToJava requestXMLToJava, PixManagerService pixMgrService, PixManagerMessageHelper pixManagerMessageHelper, IexhubPixPdqProperties iexhubPixPdqProperties,
@@ -89,7 +100,6 @@ public class PixOperationServiceImpl implements PixOperationService {
                     log.error("Pix Query was successful, but no matching value found that matches with identifier " + globalDomainId);
                     throw new PatientNotFoundException("No patient identifier found that matches with the Identifier Domain value: " + globalDomainId);
                 }
-
             } else {
                 log.error("Pix Query found no matching Patient:" + patientId + " Oid:" + patientMrnOid);
                 throw new PatientNotFoundException("Pix Query found no matching Patient. Query Message = " + pixMgrBean.getQueryMessage());
@@ -201,5 +211,43 @@ public class PixOperationServiceImpl implements PixOperationService {
         }
         log.debug("response" + pixMgrBean.getUpdateMessage());
         return pixMgrBean.getUpdateMessage();
+    }
+
+    @Override
+    public String searchPatientByMrn(String identifier){
+        //split identifier to identifier system and identifier value
+        String[] patientIdentifier=identifier.split("\\|");
+
+        String patientId;
+        //if patient identifier system is same with global domain id, then do not query HIE
+        if (patientIdentifier[0].equalsIgnoreCase(iexhubPixPdqProperties.getGlobalDomainId()))
+            patientId = patientIdentifier[1] + "^^^&" + patientIdentifier[0] + "&" + iexhubPixPdqProperties.getGlobalDomainIdTypeCode();
+        else {
+            //query to get enterpriseId
+            PatientIdentifierDto patientIdentifierDto = queryForEnterpriseId(patientIdentifier[1], patientIdentifier[0]);
+            //Convert patientId to the format: d3bb3930-7241-11e3-b4f7-00155d3a2124^^^&2.16.840.1.113883.4.357&ISO
+            patientId = patientIdentifierDto.getPatientId() + "^^^&" + patientIdentifierDto.getIdentifier() + "&" + patientIdentifierDto.getIdentifierType();
+        }
+
+        //map enterpriseId to fhir patient
+        Patient patient = new Patient();
+        patient.setId(patientId);
+
+        //add mrn to fhir patient
+        Identifier fhirIdentifier= new Identifier();
+        fhirIdentifier.setSystem(patientIdentifier[0]);
+        fhirIdentifier.setValue(patientIdentifier[1]);
+
+        patient.setIdentifier(Arrays.asList(fhirIdentifier));
+
+        //return search set bundle
+        Bundle bundle = new Bundle();
+        bundle.addEntry().setResource(patient);
+
+        Meta meta = new Meta();
+        meta.setLastUpdated(new Date());
+        bundle.setTotal(1).setType(Bundle.BundleType.SEARCHSET).setId(UUID.randomUUID().toString()).setMeta(meta);
+
+        return fhirJsonParser.setPrettyPrint(true).encodeResourceToString(bundle);
     }
 }

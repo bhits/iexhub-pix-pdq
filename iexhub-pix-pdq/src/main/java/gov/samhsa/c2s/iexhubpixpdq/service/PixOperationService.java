@@ -9,5 +9,6 @@ public interface PixOperationService {
     PatientIdentifierDto queryForEnterpriseId(String patientId, String patientMrnOid);
     String registerPatient(FhirPatientDto fhirPatientDto);
     String editPatient(FhirPatientDto fhirPatientDto);
+    String searchPatientByMrn(String identifier);
 }
 
